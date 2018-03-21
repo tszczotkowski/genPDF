@@ -2,24 +2,38 @@ package pl.szczotkowski.tomasz.pdf.gen;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 public class GenPDF {
 
 	public static void main(String[] args) throws IOException {
 
-		String pathPdf = "C:\\genPDF\\src\\";
-		String selectedPdf = pathPdf + "document.pdf";
-		String resultSRC = "C:\\genPDF\\result\\";
-		String pathResultDoc = resultSRC + "finalPDF.pdf";
-		String pathWatermark = "C:\\genPDF\\src\\Watermark.pdf";
+		
+		if(args.length == 0) {
+			
+			JOptionPane.showMessageDialog(null, "Brak argumentów");
+		}else {
+		
+		
+		String pathPdf = args[0]; 
+		String resultSRC = args[1]; 
+		String pathWatermark = args[2];
+		
+		String pathOperationDoc = resultSRC + "\\operationPDF.pdf";
+		String pathResultDoc = resultSRC + "\\FinalPDF.pdf";
 
 		try {
-			Operations.CreateFinalDocPdf(pathResultDoc);
+			Operations.CreateDocPdf(pathOperationDoc, pathResultDoc);
+
+			Operations.Splittpdf(pathPdf, pathOperationDoc, args);
+			Operations.DeleteAnnotations(pathOperationDoc);
+			Operations.AddWatermark(pathOperationDoc, pathWatermark);
+			Operations.PdfToImage(pathOperationDoc, pathResultDoc, resultSRC);
 		} catch (Exception e) {
-			System.out.println("Problem z utworzeniem pdfa");
+			System.out.println("Błąd");
 		}
 
-		Operations.splittpdf(selectedPdf, pathResultDoc);
-		Operations.addWatermark(pathResultDoc, pathWatermark);
-		Operations.rasterization(pathResultDoc);
+		System.out.println("Zakończyłem prace...");
+	}
 	}
 }
